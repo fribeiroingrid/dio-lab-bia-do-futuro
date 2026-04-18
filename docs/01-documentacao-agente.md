@@ -15,7 +15,7 @@ O agente atua como um copiloto financeiro inteligente. Ele simplifica conceitos 
 ### Público-Alvo
 > Quem vai usar esse agente?
 
-Microempreendedores Individuais (MEIs) e autônomos que operam sozinhos, possuem baixa literacia financeira e buscam uma ferramenta rápida que não demande o preenchimento de softwares complexos de ERP.
+Microempreendedores Individuais (MEIs) e autônomos que operam sozinhos, possuem falta de conhecimento em temas financeiros e buscam uma ferramenta rápida que não demande o preenchimento de softwares complexos de ERP.
 
 ---
 
