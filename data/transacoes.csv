@@ -1,11 +1,9 @@
-data,descricao,categoria,valor,tipo
-2025-10-01,Salário,receita,5000.00,entrada
-2025-10-02,Aluguel,moradia,1200.00,saida
-2025-10-03,Supermercado,alimentacao,450.00,saida
-2025-10-05,Netflix,lazer,55.90,saida
-2025-10-07,Farmácia,saude,89.00,saida
-2025-10-10,Restaurante,alimentacao,120.00,saida
-2025-10-12,Uber,transporte,45.00,saida
-2025-10-15,Conta de Luz,moradia,180.00,saida
-2025-10-20,Academia,saude,99.00,saida
-2025-10-25,Combustível,transporte,250.00,saida
+data,descricao,categoria,valor,tipo,nota da IA
+2026-04-01,Venda Cliente A,receita_venda,1500.00,entrada,-
+2026-04-02,Fornecedor de Insumos,custo_variavel,600.00,saida,Gasto do Negócio
+2026-04-03,Escola dos Filhos,pessoal,800.00,saida,Alerta: Retirada indevida do caixa
+2026-04-05,Parcela MEI (DAS),imposto,75.00,saida,Obrigação Legal
+2026-04-07,Venda Cliente B,receita_venda,400.00,entrada,-
+2026-04-10,Manutenção de Site,custo_fixo,100.00,saida,-
+2026-04-12,iFood (Jantar Sábado),pessoal,90.00,saida,Alerta: Mistura de contas
+2026-04-15,Conta de Energia (Ateliê),custo_fixo,200.00,saida,-
