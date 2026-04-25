@@ -1,7 +1,9 @@
-# LUMI - Agente de IA: Gestão Financeira para MEI
+# Lumi - Agente de IA: Gestão Financeira para MEI
 
 ## Contexto
-O LUMI redefine a relação do microempreendedor com suas finanças, evoluindo de uma planilha estática para um agente consultivo inteligente. Para o MEI, que muitas vezes opera sozinho, o LUMI atua como um "co-fundador analítico" focado em:
+O Lumi redefine a relação do microempreendedor com suas finanças, evoluindo de uma planilha estática para um agente consultivo inteligente. 
+
+Para o MEI, que muitas vezes opera sozinho, o Lumi atua como um agente focado em:
 
 - **Antecipar necessidades** ao invés de apenas responder perguntas
 - **Personalizar** sugestões com base no contexto de cada cliente
@@ -17,9 +19,13 @@ O LUMI redefine a relação do microempreendedor com suas finanças, evoluindo d
 ### 1. Documentação do Agente
 
 -**Entrada:** O usuário envia dados de vendas ou dúvidas via chat.
+
 -**Processamento:** A LLM utiliza RAG (Retrieval-Augmented Generation) para consultar a legislação MEI vigente e a base de gastos do usuário.
+
 -**Memória:** Armazenamento em banco vetorial para lembrar do contexto de faturamento mensal.
+
 -**Segurança:** Grounding: Respostas baseadas estritamente em documentos oficiais da Receita Federal.
+
 -**Filtros de Saída:** Bloqueio de recomendações de investimentos de alto risco, focando apenas em gestão de caixa.
 
 
@@ -54,7 +60,7 @@ Utilização dos **dados mockados** disponíveis na pasta [`data/`](./data/) par
 
 ### 3. Prompts do Agente
 
-Documente os prompts que definem o comportamento do agente:
+Prompts que definem o comportamento do agente:
 
 - **System Prompt:** Você é o LUMI, um assistente virtual especializado em finanças para MEIs no Brasil. Seu objetivo é ajudar o usuário a organizar o fluxo de caixa e garantir que ele não ultrapasse o limite de faturamento anual. Você deve sempre incentivar a separação das contas PF e PJ. Se o usuário perguntar algo fora do escopo financeiro empresarial, redirecione-o gentilmente.
 - **Exemplos de Interação:** Usuário: "Ganhei R$ 5.000,00 este mês. Posso gastar tudo?"
@@ -67,7 +73,7 @@ LUMI: "Parabéns pelo faturamento! Antes de gastar, lembre-se de separar a reser
 
 ### 4. Aplicação Funcional
 
-Desenvolva um **protótipo funcional** do seu agente:
+**Protótipo funcional** do seu agente:
 
 - Chatbot interativo (sugestão: Streamlit, Gradio ou similar)
 - Integração com LLM (Gemini 1.5 Pro)
@@ -98,7 +104,7 @@ Qualidade do seu agente:
 
 ### 6. Pitch
 
-Grave um **pitch de 3 minutos** (estilo elevador) apresentando:
+**Pitch de 3 minutos** apresentando:
 
 - Qual problema seu agente resolve?
 - Como ele funciona na prática?
@@ -110,7 +116,7 @@ Grave um **pitch de 3 minutos** (estilo elevador) apresentando:
 
 ## Ferramentas Sugeridas
 
-Todas as ferramentas abaixo possuem versões gratuitas:
+Ferramentas abaixo possuem versões gratuitas:
 
 | Categoria | Ferramentas |
 |-----------|-------------|
@@ -124,15 +130,15 @@ Todas as ferramentas abaixo possuem versões gratuitas:
 ## Estrutura do Repositório
 
 ```
-📁 lab-agente-financeiro/
+📁 Lumi-Agente-projeto-DIO/
 │
 ├── 📄 README.md
 │
 ├── 📁 data/                          # Dados mockados para o agente
-│   ├── historico_atendimento.csv     # Histórico de atendimentos (CSV)
+│   ├── transacoes.csv                # Histórico de transacoes (CSV)
 │   ├── perfil_investidor.json        # Perfil do cliente (JSON)
 │   ├── produtos_financeiros.json     # Produtos disponíveis (JSON)
-│   └── transacoes.csv                # Histórico de transações (CSV)
+│   └── historico_atendimento.csv     # Histórico de transações (CSV)
 │
 ├── 📁 docs/                          # Documentação do projeto
 │   ├── 01-documentacao-agente.md     # Caso de uso e arquitetura
@@ -149,14 +155,4 @@ Todas as ferramentas abaixo possuem versões gratuitas:
 │
 └── 📁 examples/                      # Referências e exemplos
     └── README.md
-```
 
----
-
-## Dicas Finais
-
-1. **Comece pelo prompt:** Um bom system prompt é a base de um agente eficaz
-2. **Use os dados mockados:** Eles garantem consistência e evitam problemas com dados sensíveis
-3. **Foque na segurança:** No setor financeiro, evitar alucinações é crítico
-4. **Teste cenários reais:** Simule perguntas que um cliente faria de verdade
-5. **Seja direto no pitch:** 3 minutos passam rápido, vá ao ponto
