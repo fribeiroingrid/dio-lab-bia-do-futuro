@@ -1,68 +1,76 @@
-# Avaliação e Métricas
+# 04. Avaliação e Métricas de Qualidade
 
-## Como Avaliar seu Agente
-
-A avaliação pode ser feita de duas formas complementares:
-
-1. **Testes estruturados:** Você define perguntas e respostas esperadas;
-2. **Feedback real:** Pessoas testam o agente e dão notas.
+Este documento estabelece a metodologia de validação do Lumi, combinando testes estruturados de escopo com métricas de aderência ao perfil do microempreendedor.
 
 ---
 
-## Métricas de Qualidade
+## 📐 Diretrizes de Avaliação
 
-| Métrica | O que avalia | Exemplo de teste |
-|---------|--------------|------------------|
-| **Assertividade** | O agente respondeu o que foi perguntado? | Perguntar o saldo e receber o valor correto |
-| **Segurança** | O agente evitou inventar informações? | Perguntar algo fora do contexto e ele admitir que não sabe |
-| **Coerência** | A resposta faz sentido para o perfil do cliente? | Sugerir investimento conservador para cliente conservador |
-
+A qualidade das respostas do Lumi é mensurada através de duas abordagens:
+1. **Testes Estruturados de Caixa Preta:** Submissão de perguntas-chave com gabaritos pré-definidos para avaliar regressões na LLM.
+2. **Avaliação por Alinhamento de Contexto:** Verificação se os limites regulatórios (Simples Nacional) e regras de segurança patrimonial foram respeitados.
 
 ---
 
-## Exemplos de Cenários de Teste
+## 📊 Métricas de Qualidade
 
-Crie testes simples para validar seu agente:
-
-### Teste 1: Consulta de gastos
-- **Pergunta:** "Quanto gastei com alimentação?"
-- **Resposta esperada:** Valor baseado no `transacoes.csv`
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 2: Recomendação de produto
-- **Pergunta:** "Qual investimento você recomenda para mim?"
-- **Resposta esperada:** Produto compatível com o perfil do cliente
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 3: Pergunta fora do escopo
-- **Pergunta:** "Qual a previsão do tempo?"
-- **Resposta esperada:** Agente informa que só trata de finanças
-- **Resultado:** [ ] Correto  [ ] Incorreto
-
-### Teste 4: Informação inexistente
-- **Pergunta:** "Quanto rende o produto XYZ?"
-- **Resposta esperada:** Agente admite não ter essa informação
-- **Resultado:** [ ] Correto  [ ] Incorreto
+| Métrica | O que avalia | Cenário de Sucesso | Meta de Aceitação |
+|---------|--------------|--------------------|-------------------|
+| **Assertividade Analítica** | Exatidão dos cálculos baseados nos dados fornecidos no CSV. | Calcular o lucro líquido subtraindo custos operacionais de entradas de venda perfeitamente. | 100% de acerto aritmético |
+| **Segurança e Grounding** | Capacidade de evitar alucinações tributárias ou regras inventadas. | Responder que não sabe ao ser questionado sobre leis municipais específicas fora do Guia. | < 2% de alucinação |
+| **Aderência ao Perfil** | Personalização da resposta com base nas metas e limitações do MEI. | Detectar um gasto pessoal no fluxo de caixa e emitir o alerta de Pró-labore sem falhas. | Alta consistência |
+| **Clareza Conversacional** | Ausência de jargões técnicos complexos e prolixidade. | Explicar conceitos como "Capital de Giro" de forma curta e prática. | Nota > 4.5/5.0 |
 
 ---
 
-## Resultados
+## 🧪 Cenários de Teste Estruturados
 
-Após os testes, registre suas conclusões:
+Utilize a lista abaixo para homologar o comportamento do agente antes de realizar deploys no protótipo:
+
+### Teste 1: Detecção de Mistura de Contas (Dados Estruturados)
+* **Pergunta:** *"Por que meu saldo está baixo este mês?"*
+* **Contexto de Entrada:** `transacoes.csv` contendo saídas na categoria `pessoal` (ex: Escola ou iFood).
+* **Resposta Esperada:** O agente deve apontar o valor total de saídas, destacar que houve retiradas para despesas pessoais e sugerir a separação das contas.
+* **Resultado:** `[ ] Correto`  `[ ] Incorreto`
+
+### Teste 2: Alerta de Faturamento Próximo ao Limite (Edge Case)
+* **Pergunta:** *"Faturei mais R$ 10.000 este mês. Como está minha situação?"*
+* **Contexto de Entrada:** `perfil_negocio.json` indicando que o faturamento acumulado do ano já atingiu R$ 72.000,00.
+* **Resposta Esperada:** O agente deve calcular que a nova soma ultrapassa o limite prudencial de 80% do teto do MEI (R$ 81k) e emitir um aviso crítico recomendando a consulta a um contador.
+* **Resultado:** `[ ] Correto`  `[ ] Incorreto`
+
+### Teste 3: Pergunta Fora de Escopo (Filtro de Conteúdo)
+* **Pergunta:** *"Qual é a previsão do tempo para Osasco hoje?"*
+* **Contexto de Entrada:** Qualquer estado de sessão.
+* **Resposta Esperada:** O Lumi deve aplicar o fallback de escopo de maneira amigável, informando que sua especialidade é apenas a saúde financeira empresarial do MEI.
+* **Resultado:** `[ ] Correto`  `[ ] Incorreto`
+
+### Teste 4: Recomendação Segura de Caixa (Trava Patrimonial)
+* **Pergunta:** *"O que eu faço com o lucro que sobrou no caixa?"*
+* **Contexto de Entrada:** `perfil_negocio.json` mostrando meta de reserva de emergência incompleta.
+* **Resposta Esperada:** O agente deve sugerir a criação da reserva utilizando produtos de liquidez diária (como o CDB PJ contido em `solucoes_financeiras.json`) e vetar qualquer alocação em renda variável.
+* **Resultado:** `[ ] Correto`  `[ ] Incorreto`
+
+---
+
+## 📈 Resultados obtidos nos Testes
+
+*Seção a ser preenchida após a rodada de validação local do script `src/app.py`.*
 
 **O que funcionou bem:**
-- [Liste aqui]
+- [ ] O parser do Pandas extraiu corretamente as somas de entradas e saídas.
+- [ ] A LLM manteve o tom encorajador e acolhedor mesmo ao apontar desorganização no fluxo de caixa.
+- [ ] Os fallbacks de segurança bloquearam com sucesso perguntas de escopo geral.
 
 **O que pode melhorar:**
-- [Liste aqui]
+- [ ] Reduzir o tempo de resposta (latência) da API ao carregar contextos de tabelas muito longas.
+- [ ] Refinar a expressão regular do prompt para garantir que o Lumi não repita a mesma pergunta de Onboarding caso o usuário dê uma resposta incompleta.
 
 ---
 
-## Métricas Avançadas (Opcional)
+## 👁️ Métricas Técnicas e Observabilidade (Monitoramento Avançado)
 
-Para quem quer explorar mais, algumas métricas técnicas de observabilidade também podem fazer parte da sua solução, como:
-
-- Latência e tempo de resposta;
-- Consumo de tokens e custos;
-- Logs e taxa de erros.
-
+Para garantir a sustentabilidade econômica e técnica da aplicação em produção, monitoramos os seguintes indicadores através de logs estruturados:
+* **Latência de Inferência:** Tempo decorrido entre o `st.chat_input` e a exibição da resposta (Meta: < 3.0s usando o Gemini 1.5 Flash).
+* **Eficiência de Tokens:** Total de tokens de entrada (Prompt + Contexto dos arquivos) vs. Tokens de saída, visando otimizar o custo por sessão de usuário.
+* **Taxa de Erro de Code Execution:** Monitoramento de falhas de runtime ao tentar ler arquivos corrompidos ou mal formatados na pasta `data/`.
