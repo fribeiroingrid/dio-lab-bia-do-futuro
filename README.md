@@ -1,158 +1,130 @@
-# Lumi - Agente de IA: Gestão Financeira para MEI
+# Lumi - Agente de IA: Gestão Financeira para MEI 🚀
 
-## Contexto
-O Lumi redefine a relação do microempreendedor com suas finanças, evoluindo de uma planilha estática para um agente consultivo inteligente. 
+## 📋 Contexto
 
-Para o MEI, que muitas vezes opera sozinho, o Lumi atua como um agente focado em:
+O **Lumi** redefine a relação do microempreendedor com suas finanças, evoluindo de uma planilha estática para um agente consultivo inteligente. Para o MEI, que muitas vezes opera sozinho, o Lumi atua como um copiloto focado em:
 
-- **Antecipar necessidades** ao invés de apenas responder perguntas
-- **Personalizar** sugestões com base no contexto de cada cliente
-- **Cocriar soluções** financeiras de forma consultiva
-- **Garantir segurança** e confiabilidade nas respostas (anti-alucinação)
-- **Educação Financeira Aplicada** Não apenas registra gastos, mas educa o empreendedor sobre a importância da separação entre contas PF (Pessoa Física) e PJ (Pessoa Jurídica) em tempo real.
-- **Proatividade Normativa** Antecipa obrigações fiscais (como o DAS-MEI) e monitora o teto de faturamento anual para evitar o desenquadramento surpresa.
--**Gestão de Sobrevivência e Crescimento** Transforma dados brutos de fluxo de caixa em insights sobre a saúde do negócio, ajudando a definir metas de/ lucro reais.
--**Conformidade** Garante que todas as orientações estejam alinhadas com as diretrizes vigentes da Receita Federal, mitigando riscos de interpretações equivocadas da lei.
-
+*   **Educação Financeira Aplicada:** Não apenas registra gastos, mas educa o empreendedor sobre a importância da separação entre contas PF (Pessoa Física) e PJ (Pessoa Jurídica) em tempo real.
+*   **Proatividade Normativa:** Antecipa obrigações fiscais (como o vencimento da guia DAS-MEI) e monitora o teto de faturamento anual para evitar o desenquadramento surpresa.
+*   **Gestão de Sobrevivência e Crescimento:** Transforma dados brutos de fluxo de caixa em insights sobre a saúde do negócio, auxiliando na definição de um Pró-labore justo e na criação de capital de giro.
+*   **Conformidade e Anti-alucinação:** Garante que todas as orientações estejam estritamente alinhadas com as diretrizes vigentes da Receita Federal, mitigando riscos de interpretações equivocadas da lei.
 
 ---
+
 ### 1. Documentação do Agente
 
--**Entrada:** O usuário envia dados de vendas ou dúvidas via chat.
+*   **Caso de Uso:** O agente resolve a desorganização financeira e a mistura de patrimônio (PF/PJ). Ele realiza a análise preditiva do fluxo de caixa, emite alertas educativos ao detectar despesas pessoais pagas com recursos da empresa e gerencia o progresso de metas de curto/longo prazo.
+*   **Persona e Tom de Voz:** O LUMI atua como um mentor pragmático, encorajador e acolhedor. Sua comunicação é direta, sem "economês" ou jargões jurídicos excessivos, tornando os conceitos contábeis acessíveis a quem está começando a empreender.
+*   **Arquitetura:** O fluxo de dados opera sob uma estrutura RAG (*Retrieval-Augmented Generation*). 
+    *   **Entrada:** Dúvidas ou novos lançamentos enviados via chat.
+    *   **Processamento:** A LLM cruza os dados do histórico transacional com as regras de negócio parametrizadas.
+    *   **Base de Conhecimento:** Arquivos de texto estruturados com a legislação MEI e guias práticos de tributação.
+*   **Segurança:** Implementação de técnicas de *Grounding* para blindar o agente contra alucinações. O sistema possui filtros de saída rígidos que bloqueiam recomendações de investimentos de alto risco ou especulativos, direcionando o foco do MEI exclusivamente para a liquidez e proteção do caixa.
 
--**Processamento:** A LLM utiliza RAG (Retrieval-Augmented Generation) para consultar a legislação MEI vigente e a base de gastos do usuário.
-
--**Memória:** Armazenamento em banco vetorial para lembrar do contexto de faturamento mensal.
-
--**Segurança:** Grounding: Respostas baseadas estritamente em documentos oficiais da Receita Federal.
-
--**Filtros de Saída:** Bloqueio de recomendações de investimentos de alto risco, focando apenas em gestão de caixa.
-
-
-- **Caso de Uso:** Qual problema financeiro ele resolve? (ex: consultoria de investimentos, planejamento de metas, alertas de gastos)
-- **Persona e Tom de Voz:** Como o agente se comporta e se comunica?
-- **Arquitetura:** Fluxo de dados e integração com a base de conhecimento
-- **Segurança:** Como evitar alucinações e garantir respostas confiáveis?
-- **Cálculo** de obrigações (DAS-MEI).
-- **Gestão de fluxo de caixa** e alertas de teto de faturamento anual.
-- **Persona e Tom de Voz** O LUMI é um mentor pragmático e encorajador. Ele se comunica de forma clara, sem "economês" excessivo, mas mantém o profissionalismo. É direto ao ponto, mas acolhedor para quem está começando a empreender.
-
-
-📄 **Template:** [`docs/01-documentacao-agente.md`](./docs/01-documentacao-agente.md)
+📄 *Mais detalhes em:* `docs/01-documentacao-agente.md`
 
 ---
 
 ### 2. Base de Conhecimento
 
-Utilização dos **dados mockados** disponíveis na pasta [`data/`](./data/) para alimentar o agente:
+Utilização dos dados estruturados disponíveis na pasta `data/` para alimentar o contexto do agente:
 
-| Arquivo | Formato | Descrição |
-|---------|---------|-----------|
-| `transacoes.csv` | CSV | Histórico de transações do cliente |
-| `historico_atendimento.csv` | CSV | Histórico de atendimentos anteriores |
-| `perfil_investidor.json` | JSON | Perfil e preferências do cliente |
-| `produtos_financeiros.json` | JSON | Produtos e serviços disponíveis |
+| Arquivo | Formato | Descrição | Utilização no Agente |
+|---------|---------|-----------|----------------------|
+| `transacoes.csv` | CSV | Histórico de fluxo de caixa do cliente (entradas e saídas). | Utilizado pelo motor analítico para calcular o lucro líquido e identificar mistura de contas. |
+| `perfil_negocio.json` | JSON | Dados cadastrais do MEI, metas financeiras e Pró-labore alvo. | Funciona como a memória de longo prazo para personalizar os insights e alertas do usuário. |
+| `solucoes_financeiras.json` | JSON | Catálogo de produtos e serviços disponíveis (ex: microcrédito, CDB de liquidez diária, seguros). | Base de dados consultada pela IA para recomendar soluções de proteção ou alocação de caixa. |
+| `historico_atendimento.csv` | CSV | Logs de interações e dúvidas anteriores do microempreendedor. | Utilizado para manter a consistência do atendimento e identificar temas recorrentes (taxas, DAS). |
+| `guia_tributario_mei.md` | Markdown | Legislação oficial, regras do Simples Nacional e limites de faturamento. | Base de conhecimento estática para garantir respostas 100% seguras sobre obrigações fiscais. |
 
-
-📄 **Template:** [`docs/02-base-conhecimento.md`](./docs/02-base-conhecimento.md)
+📄 *Mais detalhes em:* `docs/02-base-conhecimento.md`
 
 ---
 
 ### 3. Prompts do Agente
 
-Prompts que definem o comportamento do agente:
+*   **System Prompt:**
+    ```text
+    Você é o LUMI, um assistente virtual especialista em finanças para MEIs no Brasil. Seu objetivo é ajudar o usuário a organizar o fluxo de caixa e garantir a sobrevivência do negócio. Você deve monitorar rigorosamente o limite de faturamento anual (R$ 81.000) e alertar o usuário sempre que ele utilizar o caixa PJ para despesas pessoais (PF). Mantenha um tom educativo, empático e livre de termos técnicos complexos.
+    ```
+*   **Exemplos de Interação:**
+    *   **Usuário:** *"Faturei R$ 5.000,00 este mês. Posso transferir tudo para minha conta pessoal?"*
+    *   **LUMI:** *"Parabéns pelo faturamento! Antes de transferir, lembre-se de que a empresa possui custos fixos e a guia do DAS (aprox. R$ 70-75) para pagar. O ideal é definirmos um Pró-labore fixo para você e manter o restante no caixa como capital de giro. Quer que eu te ajude a calcular um valor seguro para essa retirada?"*
+*   **Tratamento de Edge Cases:** Se o volume acumulado de entradas indicado no `transacoes.csv` atingir 80% do limite legal anual, o LUMI interrompe as orientações de rotina e dispara um alerta crítico recomendando formalmente o suporte de um contador para o processo de desenquadramento.
 
-- **System Prompt:** Você é o LUMI, um assistente virtual especializado em finanças para MEIs no Brasil. Seu objetivo é ajudar o usuário a organizar o fluxo de caixa e garantir que ele não ultrapasse o limite de faturamento anual. Você deve sempre incentivar a separação das contas PF e PJ. Se o usuário perguntar algo fora do escopo financeiro empresarial, redirecione-o gentilmente.
-- **Exemplos de Interação:** Usuário: "Ganhei R$ 5.000,00 este mês. Posso gastar tudo?"
-LUMI: "Parabéns pelo faturamento! Antes de gastar, lembre-se de separar a reserva para o boleto DAS (aprox. R$ 70-75) e a reserva de emergência da sua empresa. Recomendo separar ao menos 30% para reinvestimento."
-- **Tratamento de Edge Cases:** Faturamento Próximo ao Limite: Se o usuário reportar ganhos que somem mais de R$ 81.000 no ano, o LUMI dispara um alerta imediato sobre o desenquadramento e a necessidade de um contador.
-
-📄 **Template:** [`docs/03-prompts.md`](./docs/03-prompts.md)
+📄 *Mais detalhes em:* `docs/03-prompts.md`
 
 ---
 
 ### 4. Aplicação Funcional
 
-**Protótipo funcional** do seu agente:
+O protótipo do ecossistema do agente foi desenvolvido contendo:
+*   **Chatbot Interativo:** Interface construída em **Streamlit**, permitindo o diálogo fluido e a visualização rápida da saúde do fluxo de caixa.
+*   **Integração com LLM:** Processamento nativo via API do **Gemini 1.5 Pro** para orquestração de chamadas e inferência de intenções.
+*   **Conexão com a Base:** Integração via Python utilizando `Pandas` para manipulação analítica das planilhas e arquivos JSON da pasta `data/`.
 
-- Chatbot interativo (sugestão: Streamlit, Gradio ou similar)
-- Integração com LLM (Gemini 1.5 Pro)
-- Conexão com a base de conhecimento: Arquivos PDF com o Guia do MEI e planilhas CSV de histórico de transações,
-
-📁 **Pasta:** [`src/`](./src/)
+📁 *Código-fonte em:* `src/`
 
 ---
 
 ### 5. Avaliação e Métricas
 
-Qualidade do seu agente:
-
-- Precisão/assertividade das respostas
-- Taxa de respostas seguras (sem alucinações)
-- Coerência com o perfil do cliente
-- 
 | Métrica | Descrição | Meta |
-|---------|---------|-----------|
-| `Precisão Fiscal` | Exatidão no cálculo de impostos e limites de faturamento. | 100% |
-| `Taxa de Alucinação` | Frequência com que o agente inventa regras tributárias. | < 2% |
-| `Retenção de Contexto` | Capacidade de lembrar o faturamento dos meses anteriores na mesma sessão. | Alta |
-| `Clareza de Resposta` | Avaliação (1-5) se o MEI entendeu a orientação sem termos complexos. | > 4.5 |
+|---------|-----------|------|
+| **Precisão Fiscal** | Exatidão no cálculo de impostos, prazos e regras do Simples Nacional. | 100% |
+| **Taxa de Alucinação** | Frequência com que o agente inventa dados ou regras não contidas nas bases. | < 2% |
+| **Retenção de Contexto** | Capacidade de correlacionar lançamentos anteriores na mesma sessão de chat. | Alta |
+| **Clareza de Resposta** | Avaliação de legibilidade e ausência de termos complexos (escala 1-5). | > 4.5 |
 
-📄 **Template:** [`docs/04-metricas.md`](./docs/04-metricas.md)
+📄 *Mais detalhes em:* `docs/04-metricas.md`
 
 ---
 
 ### 6. Pitch
 
-**Pitch de 3 minutos** apresentando:
+Apresentação executiva detalhando:
+1.  **O Problema:** A alta taxa de mortalidade das microempresas no Brasil por falta de capital de giro e confusão patrimonial.
+2.  **A Solução:** Como o LUMI transforma dados frios de planilhas em tomada de decisão em tempo real na linguagem do empreendedor.
+3.  **O Diferencial:** O foco em RAG preventivo focado em sobrevivência de negócios e não em investimentos tradicionais de varejo.
 
-- Qual problema seu agente resolve?
-- Como ele funciona na prática?
-- Por que essa solução é inovadora?
+📄 *Mais detalhes em:* `docs/05-pitch.md`
 
-📄 **Template:** [`docs/05-pitch.md`](./docs/05-pitch.md)
+---
+
+## 🛠️ Ferramentas Utilizadas
+
+*   **LLMs & Processamento:** Google Gemini 1.5 Pro
+*   **Ambiente de Desenvolvimento:** Python 3, Streamlit, Google Colab
+*   **Manipulação de Dados:** Pandas, JSON Library
+*   **Arquitetura & Fluxos:** Mermaid (Diagramas de sequência)
 
 ---
 
-## Ferramentas Sugeridas
-
-Ferramentas abaixo possuem versões gratuitas:
-
-| Categoria | Ferramentas |
-|-----------|-------------|
-| **LLMs** | [ChatGPT](https://chat.openai.com/), [Copilot](https://copilot.microsoft.com/), [Gemini](https://gemini.google.com/), [Claude](https://claude.ai/), [Ollama](https://ollama.ai/) |
-| **Desenvolvimento** | [Streamlit](https://streamlit.io/), [Gradio](https://www.gradio.app/), [Google Colab](https://colab.research.google.com/) |
-| **Orquestração** | [LangChain](https://www.langchain.com/), [LangFlow](https://www.langflow.org/), [CrewAI](https://www.crewai.com/) |
-| **Diagramas** | [Mermaid](https://mermaid.js.org/), [Draw.io](https://app.diagrams.net/), [Excalidraw](https://excalidraw.com/) |
-
----
+## 📁 Estrutura do Repositório
+```text
+📁 Lumi-Agente-projeto-DIO/
+│
+├── 📄 README.md                      # Documentação principal
+│
+├── 📁 data/                          # Dados de entrada do agente
+│   ├── transacoes.csv                # Histórico de fluxo de caixa (CSV)
+│   ├── perfil_negocio.json           # Perfil cadastral e metas do MEI (JSON)
+│   ├── solucoes_financeiras.json     # Catálogo de produtos/crédito (JSON)
+│   ├── historico_atendimento.csv     # Logs de suporte anteriores (CSV)
+│   └── guia_tributario_mei.md        # Base normativa em Markdown
+│
+├── 📁 docs/                          # Detalhamento de engenharia
+│   ├── 01-documentacao-agente.md     # Casos de uso e arquitetura
+│   ├── 02-base-conhecimento.md       # Estratégia e mapeamento de dados
+│   ├── 03-prompts.md                 # Engenharia de prompts e contextos
+│   ├── 04-metricas.md                # Indicadores e avaliação de qualidade
+│   └── 05-pitch.md                   # Roteiro e estrutura do Pitch
+│
+├── 📁 src/                           # Código da aplicação
+│   └── app.py                        # Script do protótipo funcional em Streamlit
+│
+└── 📁 assets/                        # Diagramas e mídias do repositório
 
 ## Estrutura do Repositório
 
 ```
-📁 Lumi-Agente-projeto-DIO/
-│
-├── 📄 README.md
-│
-├── 📁 data/                          # Dados mockados para o agente
-│   ├── transacoes.csv                # Histórico de transacoes (CSV)
-│   ├── perfil_investidor.json        # Perfil do cliente (JSON)
-│   ├── produtos_financeiros.json     # Produtos disponíveis (JSON)
-│   └── historico_atendimento.csv     # Histórico de transações (CSV)
-│
-├── 📁 docs/                          # Documentação do projeto
-│   ├── 01-documentacao-agente.md     # Caso de uso e arquitetura
-│   ├── 02-base-conhecimento.md       # Estratégia de dados
-│   ├── 03-prompts.md                 # Engenharia de prompts
-│   ├── 04-metricas.md                # Avaliação e métricas
-│   └── 05-pitch.md                   # Roteiro do pitch
-│
-├── 📁 src/                           # Código da aplicação
-│   └── app.py                        # (exemplo de estrutura)
-│
-├── 📁 assets/                        # Imagens e diagramas
-│   └── ...
-│
-└── 📁 examples/                      # Referências e exemplos
-    └── README.md
-
