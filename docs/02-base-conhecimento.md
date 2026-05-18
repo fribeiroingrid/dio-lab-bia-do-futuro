@@ -1,68 +1,54 @@
-# Base de Conhecimento
+# 02. Estratégia de Dados e Base de Conhecimento
 
-## Dados Utilizados
+## 📂 Dados Utilizados
 
-Descreva se usou os arquivos da pasta `data`, por exemplo:
+O ecossistema do Lumi consome dados estruturados e semiestruturados localizados na pasta `data/` para contextualizar as decisões e garantir o ancoramento (*grounding*) das respostas da LLM.
 
 | Arquivo | Formato | Utilização no Agente |
 |---------|---------|---------------------|
-|`historico_atendimento.csv` | CSV | Treinamento de Contexto: Ensina a IA a identificar temas comuns (DAS, Maquininha, Capital de Giro) e o tom de voz para resolver problemas.|
-| `perfil_investidor.json` | JSON | Memória de Longo Prazo: Define quem é o MEI, seu faturamento, metas (ex: reserva de 6 meses) e se ele possui o hábito de misturar contas pessoais. |
-| `produtos_financeiros.json` | JSON | Objetivos do usuário (ex: criar reserva de emergência, comprar equipamento). |
-| `transacoes.csv` | CSV | Dados fictícios para o usuário testar as funcionalidades de análise. |
-| `guia_tributario_mei.md` |Markdown | Base de consulta para dúvidas sobre DAS, nota fiscal e prazos. 
-| `dicionario_mei.json` | JSON | Base de conhecimento estática com regras do Simples Nacional e MEI. |
-| `input_conversacional` | Texto (Memória) | Dados coletados via chat para usuários sem histórico (onboarding). |
-
-
-
-
+| `transacoes.csv` | CSV | **Motor Analítico:** Histórico de movimentações reais (entradas e saídas) utilizado para calcular o lucro líquido e mapear "misturas de contas" (categorias marcadas como *pessoal*). |
+| `perfil_negocio.json` | JSON | **Memória de Longo Prazo:** Contém os metadados do MEI, faturamento médio estimado, valor do Pró-labore alvo e progresso de metas de expansão do CNPJ. |
+| `solucoes_financeiras.json` | JSON | **Catálogo de Recomendações:** Produtos homologados e seguros para o perfil MEI (crédito produtivo, seguros de renda protegida e CDBs de liquidez diária para capital de giro). |
+| `historico_atendimento.csv` | CSV | **Treinamento Conversacional:** Logs de interações anteriores para que o agente reconheça padrões de dúvidas recorrentes (DAS, taxas de maquininha, etc.). |
+| `guia_tributario_mei.md` | Markdown | **Base Normativa:** Manual consultivo contendo limites legais de faturamento (R$ 81.000), prazos e regras do Simples Nacional para evitar alucinações fiscais. |
+| `template_vazio.csv` | CSV | **Onboarding:** Estrutura limpa e padronizada enviada como modelo para novos usuários que ainda não possuem controle financeiro. |
+| `input_conversacional` | Texto | **Memória de Curto Prazo:** Dados coletados dinamicamente via chat durante a sessão atual do usuário. |
 
 ---
 
-## Adaptações nos Dados
+## 🛠️ Adaptações e Expansão dos Dados
 
-> Você modificou ou expandiu os dados mockados? Descreva aqui.
+Para tornar o agente acessível a quem está começando e não possui planilhas, implementamos a lógica de **"Entrevista Inicial Automatizada"**:
 
-O agente ativa o modo "Entrevista Inicial".
-
-Os dados fornecidos no chat (ex: "ganho 3 mil por mês", "gasto 500 com luz") são estruturados em um dicionário temporário que simula a base de dados.
-
-O usuário tem a opção de baixar esses dados ao final da sessão para usá-los como sua primeira planilha oficial.
+1. Caso o usuário não possua histórico financeiro prévio, o Lumi ativa o modo de onboarding conversacional.
+2. À medida que o empreendedor responde perguntas simples no chat (ex: *"ganho R$ 3.000 por mês"* ou *"gasto R$ 500 com luz"*), o script Python captura esses inputs e os estrutura em um dicionário temporário em memória (`input_conversacional`).
+3. Ao final da sessão, a aplicação consolida esses dados e gera um arquivo `.csv` inicial personalizado. O usuário pode fazer o download deste arquivo para utilizá-lo como sua primeira ferramenta de controle oficial.
 
 ---
 
-## Estratégia de Integração
+## ⚙️ Estratégia de Integração
 
 ### Como os dados são carregados?
-> Descreva como seu agente acessa a base de conhecimento.
+O agente utiliza um gerenciador de estados (*State Management*) nativo do Streamlit (`st.session_state`). No início da execução do script Python, o sistema verifica a existência e a integridade dos arquivos na pasta `data/`. 
 
-O agente utiliza um Gerenciador de Estado (State Management). No início da sessão, o Python verifica a existência de arquivos na pasta data/. Se vazia, o sistema injeta um "Sinalizador de Iniciante" no contexto da LLM, disparando o fluxo de boas-vindas e configuração.
+Se a pasta estiver vazia ou os arquivos estiverem zerados, a aplicação injeta dinamicamente um **"Sinalizador de Iniciante"** no contexto da LLM, modificando o fluxo de comportamento para o modo Boas-Vindas e Configuração.
 
 ### Como os dados são usados no prompt?
-> Os dados vão no system prompt? São consultados dinamicamente?
+A montagem do prompt para a API do Gemini ocorre de duas formas distintas baseadas no estado do usuário:
 
-Se houver dados: O prompt inclui o resumo do CSV (ex: "Seu lucro médio é X").
-
-Se não houver dados: O prompt recebe uma instrução de sistema: "O usuário é iniciante. Não tente analisar o passado; ajude-o a mapear seus primeiros custos operacionais e precificar seu serviço."
+*   **Com Histórico Existente:** O script lê o `transacoes.csv` e o `perfil_negocio.json` usando Pandas e injeta no prompt um resumo agregador estruturado (ex: *"O usuário possui um faturamento acumulado de X, lucro líquido médio de Y e cometeu Z misturas de contas pessoais neste mês"*).
+*   **Sem Histórico (Iniciante):** O prompt de sistema recebe uma instrução de contingência: *"O usuário é um iniciante absoluto. Não tente analisar dados passados. Concentre sua atuação em ajudá-lo a mapear seus primeiros custos operacionais e estruturar sua precificação básica."*
 
 ---
 
-## Exemplo de Contexto Montado
+## 📝 Exemplo de Contexto Montado
 
-> Mostre um exemplo de como os dados são formatados para o agente.
+Abaixo estão os modelos de estruturas de contexto injetadas dinamicamente na LLM conforme o momento da jornada do microempreendedor:
 
-```
-
+### Cenário A: Usuário Ativo (Com Histórico)
+```text
 [STATUS: ATIVO]
-[CONTEXTO] Usuário possui 6 meses de histórico. 
-[INSIGHT] Saldo positivo constante, mas sem reserva de emergência.
-[AÇÃO] Sugerir criação de reserva antes de novos investimentos.
-
-[STATUS: ONBOARDING]
-[CONTEXTO] Usuário acabou de abrir o MEI. Não possui registros.
-[INSIGHT] Precisa de ajuda com precificação e separação de contas (PF/PJ).
-[AÇÃO] Fazer perguntas curtas: 1. Qual seu nicho? 2. Qual sua meta de renda mensal?
-
-...
-```
+[CONTEXTO] Usuário possui 6 meses de histórico no arquivo transacoes.csv.
+[PERFIL] Setor: Comércio. Faturamento Acumulado: R$ 42.000,00.
+[INSIGHT ANALÍTICO] Saldo em caixa positivo constante, mas o campo 'reserva_emergencia' está zerado no perfil_negocio.json.
+[DIRETRIZ DE AÇÃO] Priorizar respostas que incentivem a criação do colchão de liquidez empresarial utilizando produtos de 'solucoes_financeiras.json' antes de sugerir novos gastos de expansão.
