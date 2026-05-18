@@ -1,0 +1,14 @@
+{
+  "nome": "Mariana Souza",
+  "empresa": "Mariana Bolos Artesanais",
+  "faturamento_medio": 6500.00,
+  "pro_labore_alvo": 3000.00,
+  "gargalo_identificado": "Usa o Pix da empresa para pagar conta de luz de casa",
+  "metas": [
+    {
+      "meta": "Fundo de reserva do negócio",
+      "valor_necessario": 12000.00,
+      "prazo": "2027-01"
+    }
+  ]
+}
