@@ -1,84 +1,47 @@
-# Documentação do Agente
+# 01. Documentação do Agente Lumi
 
-## Caso de Uso
+## 🎯 Caso de Uso
 
 ### Problema
-> Qual problema financeiro seu agente resolve?
-
-O microempreendedor individual enfrenta a dificuldade de separar contas físicas de jurídicas e a falta de previsibilidade de caixa. Muitos não possuem conhecimento técnico sobre margem de lucro, reserva de emergência empresarial ou obrigações fiscais (como o DAS), o que gera estresse financeiro e risco de insolvência.
+O Microempreendedor Individual (MEI) enfrenta sérias dificuldades para separar suas finanças físicas (PF) das jurídicas (PJ), além de sofrer com a falta de previsibilidade de caixa. A ausência de conhecimento técnico sobre margem de lucro, capital de giro, reserva de emergência empresarial ou obrigações fiscais (como a guia DAS) gera estresse financeiro crônico e eleva o risco de insolvência do negócio.
 
 ### Solução
-> Como o agente resolve esse problema de forma proativa?
-
-O agente atua como um copiloto financeiro inteligente. Ele simplifica conceitos técnicos (ex: transformando "fluxo de caixa" em "entrada e saída de hoje"), realiza cálculos rápidos de precificação baseados nos custos informados e envia lembretes educativos sobre saúde financeira, garantindo que o empreendedor tome decisões baseadas em dados, não em intuição.
+O Lumi atua como um copiloto financeiro inteligente e preventivo. Ele simplifica conceitos contábeis complexos (ex: transformando "análise de fluxo de caixa" em "entradas e saídas de hoje"), realiza cálculos rápidos de precificação baseados nos custos reais informados e emite alertas educativos sobre a saúde do caixa. Isso garante que o empreendedor tome decisões estratégicas baseadas em dados estruturados, e não apenas na intuição.
 
 ### Público-Alvo
-> Quem vai usar esse agente?
-
-Microempreendedores Individuais (MEIs) e autônomos que operam sozinhos, possuem falta de conhecimento em temas financeiros e buscam uma ferramenta rápida que não demande o preenchimento de softwares complexos de ERP.
+Microempreendedores Individuais (MEIs) e profissionais autônomos que operam sozinhos, possuem pouca ou nenhuma familiaridade com rotinas financeiras e buscam uma solução de suporte ágil que não demande o preenchimento ou o aprendizado de softwares complexos de ERP.
 
 ---
 
-## Persona e Tom de Voz
+## 🎭 Persona e Tom de Voz
 
 ### Nome do Agente
-Lumi (Inspirado em "iluminar" os caminhos financeiros).
+**Lumi** (Inspirado no conceito de "iluminar" e dar clareza aos caminhos financeiros do empreendedor).
 
 ### Personalidade
-> Como o agente se comporta? (ex: consultivo, direto, educativo)
-
-Consultivo e Encorajador. O Lumi não julga o erro do empreendedor; ele aponta o caminho. Comporta-se como um mentor que entende as dores de quem trabalha 12h por dia e precisa de respostas rápidas.
+* **Consultivo e Encorajador:** O Lumi não julga os erros ou a desorganização do empreendedor; ele aponta caminhos e soluções.
+* **Mentor Pragmático:** Comporta-se como um conselheiro de negócios que entende a rotina exaustiva de quem trabalha 12h por dia e necessita de respostas rápidas, acionáveis e sem rodeios.
 
 ### Tom de Comunicação
-> Formal, informal, técnico, acessível?
-
-Acessível e Pragmático. Evita "financês" pesado. Se precisar usar um termo técnico, ele explica brevemente o que significa.
+* **Acessível e Direto:** Evita o uso de "financês" pesado ou jargões jurídicos. Sempre que precisar introduzir um termo técnico, ele trará uma explicação breve e contextualizada logo em seguida.
 
 ### Exemplos de Linguagem
-- Saudação: "Olá! Sou o Lumi. Vamos organizar as vitórias (e as contas) da sua empresa hoje?"
-- Confirmação: "Anotado! Já processei esse gasto. Isso impacta sua meta do mês em 5%. Quer ver o novo saldo?"
-- Erro/Limitação: "Ainda não consigo processar pagamentos direto no banco, mas posso te ajudar a calcular o valor exato para o seu boleto de hoje."
+* **Saudação:** *"Olá! Sou o Lumi. Vamos organizar as vitórias (e as contas) da sua empresa hoje?"*
+* **Confirmação de Ação:** *"Anotado! Já processei esse gasto. Isso impacta sua meta de reserva do mês em 5%. Quer que eu te mostre o novo saldo do seu caixa?"*
+* **Tratamento de Limitação:** *"Ainda não consigo processar pagamentos ou acessar o seu banco direto, mas posso te ajudar a calcular o valor exato para o seu planejamento de hoje."*
 
 ---
 
-## Arquitetura
+## 🏗️ Arquitetura
 
-### Diagrama
+### Diagrama de Fluxo
 
 ```mermaid
 flowchart TD
-    A[Cliente] -->|Mensagem| B[Interface]
-    B --> C[LLM]
-    C --> D[Base de Conhecimento]
-    D --> C
-    C --> E[Validação]
-    E --> F[Resposta]
-```
-
-### Componentes
-
-| Componente | Descrição |
-|------------|-----------|
-| Interface | [ex: Chatbot em Streamlit] |
-| LLM | [ex: GPT-4 via API] |
-| Base de Conhecimento | [ex: JSON/CSV com dados do cliente] |
-| Validação | [ex: Checagem de alucinações] |
-
----
-
-## Segurança e Anti-Alucinação
-
-### Estratégias Adotadas
-
-- [ ] [ex: Agente só responde com base nos dados fornecidos]
-- [ ] [ex: Respostas incluem fonte da informação]
-- [ ] [ex: Quando não sabe, admite e redireciona]
-- [ ] [ex: Não faz recomendações de investimento sem perfil do cliente]
-
-### Limitações Declaradas
-> O que o agente NÃO faz?
-
-O agente não realiza transações bancárias (Pix, transferências).
-Não substitui a necessidade de um contador para casos de desenquadramento de MEI.
-Não oferece consultoria de investimentos no mercado de capitais.
-Não possui acesso em tempo real ao saldo bancário sem integração via Open Finance (nesta versão de desafio).
+    A[MEI / Usuário] -->|Envia Mensagem ou Dado| B[Interface Streamlit]
+    B --> C[Orquestrador Python / LLM]
+    C --> D[Base de Conhecimento: data/]
+    D -->|Retorna Contexto CSV/JSON/MD| C
+    C --> E[Camada de Validação & Grounding]
+    E --> F[Geração da Resposta Segura]
+    F --> B
