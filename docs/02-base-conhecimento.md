@@ -52,3 +52,43 @@ Abaixo estão os modelos de estruturas de contexto injetadas dinamicamente na LL
 [PERFIL] Setor: Comércio. Faturamento Acumulado: R$ 42.000,00.
 [INSIGHT ANALÍTICO] Saldo em caixa positivo constante, mas o campo 'reserva_emergencia' está zerado no perfil_negocio.json.
 [DIRETRIZ DE AÇÃO] Priorizar respostas que incentivem a criação do colchão de liquidez empresarial utilizando produtos de 'solucoes_financeiras.json' antes de sugerir novos gastos de expansão.
+````
+## 💻 Implementação Técnica: Carregamento da Base de Conhecimento
+
+Abaixo está o trecho do código em Python (`src/app.py`) responsável por realizar o mapeamento, leitura e tratamento de erros dos arquivos da pasta `data/`, preparando os dados estruturados para o motor da LLM:
+
+```python
+import os
+import json
+import pandas as pd
+
+def carregar_dados():
+    """
+    Função do ecossistema do Lumi responsável pelo pipeline de ingestão
+    da base de conhecimento local para a memória volátil do agente.
+    """
+    caminho_perfil = 'data/perfil_negocio.json'
+    caminho_transacoes = 'data/transacoes.csv'
+    
+    perfil = None
+    transacoes = None
+    
+    # 1. Ingestão e Tratamento do Arquivo JSON de Perfil
+    if os.path.exists(caminho_perfil):
+        try:
+            with open(caminho_perfil, 'r', encoding='utf-8') as f:
+                perfil = json.load(f)
+        except json.JSONDecodeError:
+            # Proteção contra arquivos JSON corrompidos ou mal formatados
+            perfil = None
+            
+    # 2. Ingestão e Parser Analítico da Planilha de Transações via Pandas
+    if os.path.exists(caminho_transacoes):
+        try:
+            transacoes = pd.read_csv(caminho_transacoes)
+            # Garante a formatação do tipo de dado para evitar erros de agregação
+            transacoes['valor'] = pd.to_numeric(transacoes['valor'], errors='coerce')
+        except Exception:
+            transacoes = None
+            
+    return perfil, transacoes
